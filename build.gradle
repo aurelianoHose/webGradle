@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+apply plugin: 'com.bmuschko.cargo'
+ 
+ext.tomcatVersion = '7.0.54'
+ext.cargoVersion = '1.4.18'
+ 
+buildscript {
+    repositories {
+        jcenter()
+    }
+ 
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.2'
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.2.2'    
+   }
+}
+ 
+repositories {
+    mavenCentral()
+}
+ 
+dependencies {
+
+   compile 'javax.servlet:javax.servlet-api:3.1.0'
+   compile 'org.springframework:spring-webmvc:4.2.4.RELEASE'
+   runtime "jstl:jstl:1.2"
+ 
+   tomcat 	"org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}", 
+			"org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+   tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+       exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+       cargo "org.codehaus.cargo:cargo-core-uberjar:${cargoVersion}",  "org.codehaus.cargo:cargo-ant:${cargoVersion}"
+   }
+ 
+}
+ 
+// gradle cargoRunLocal
+cargo {
+    containerId = 'tomcat7x'
+    port = 8080
+    local {
+        homeDir = file('D:/work/soft/apache-tomcat-7.0.54')
+        outputFile = file('D:/work/soft/apache-tomcat-7.0.54/output.log')
+    }
+}
+
+war {
+    version = '' 
+}
